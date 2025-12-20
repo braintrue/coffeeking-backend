@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<!--
+  Page for managing matches.
+
+  Users can host a match on a selected table or join existing open
+  matches.  The list of matches displays hosts, guests and status.
+-->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoffeeKing – Matches</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <h1>Matches</h1>
+    <nav>
+      <a href="dashboard.html">Home</a>
+      <a href="menus.html">Menus</a>
+      <a href="tables.html">Tables</a>
+      <a href="orders.html">Orders</a>
+      <a href="matches.html">Matches</a>
+      <button id="logout">Logout</button>
+    </nav>
+    <h2>Create Match</h2>
+    <form id="match-form">
+      <label for="match-table">Select Table:</label>
+      <select id="match-table"></select>
+      <button type="submit">Host Match</button>
+    </form>
+    <h2>Existing Matches</h2>
+    <ul id="match-list"></ul>
+    <script src="dashboard.js"></script>
+    <script src="matches.js"></script>
+  </body>
+</html>

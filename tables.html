@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<!--
+  Page for viewing and managing tables.
+
+  Users can create new tables specifying a name, capacity and status.  The
+  list of existing tables is displayed with options to toggle status
+  between available/occupied and to delete a table entirely.
+-->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoffeeKing – Tables</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <h1>Tables</h1>
+    <nav>
+      <a href="dashboard.html">Home</a>
+      <a href="menus.html">Menus</a>
+      <a href="tables.html">Tables</a>
+      <a href="orders.html">Orders</a>
+      <a href="matches.html">Matches</a>
+      <button id="logout">Logout</button>
+    </nav>
+    <h2>Create Table</h2>
+    <form id="table-form">
+      <input type="text" id="table-name" placeholder="Name" required />
+      <input type="number" id="table-capacity" placeholder="Capacity" value="2" min="1" required />
+      <select id="table-status">
+        <option value="available">available</option>
+        <option value="occupied">occupied</option>
+      </select>
+      <button type="submit">Add Table</button>
+    </form>
+    <h2>Tables</h2>
+    <ul id="table-list"></ul>
+    <script src="dashboard.js"></script>
+    <script src="tables.js"></script>
+  </body>
+</html>

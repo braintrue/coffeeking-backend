@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<!--
+  Dashboard page for authenticated users.
+
+  This page provides navigation links to all features of the CoffeeKing
+  application: menus, tables, orders and matches.  The logout button
+  clears the stored JWT and returns the user to the login page.
+-->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoffeeKing – Dashboard</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <h1>Dashboard</h1>
+    <nav>
+      <a href="menus.html">Menus</a>
+      <a href="tables.html">Tables</a>
+      <a href="orders.html">Orders</a>
+      <a href="matches.html">Matches</a>
+      <button id="logout">Logout</button>
+    </nav>
+    <p>Select a section from the navigation above to manage menus, tables,
+    place orders or host/join matches.</p>
+    <script src="dashboard.js"></script>
+  </body>
+</html>
