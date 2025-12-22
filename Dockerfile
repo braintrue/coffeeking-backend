@@ -1,15 +1,15 @@
-FROM python:3.11-slim
+# Dockerfile for the CoffeeKing frontend service.
 
-WORKDIR /app
+# Use an Nginx base image to serve static files.
+FROM nginx:alpine
 
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
+# Copy the compiled frontend assets into the web root.  Since our
+# frontend consists solely of static HTML, CSS and JS files there is
+# no build step required.
+COPY . /usr/share/nginx/html
 
-COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+# Expose the default HTTP port.
+EXPOSE 80
 
-COPY . .
-
-EXPOSE 8000
-
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Nginx runs by default under the default command; no CMD override
+# necessary.

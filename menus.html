@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<!--
+  Page for viewing and managing menu items.
+
+  This page lists all existing menu items and provides a form to create
+  new items.  Each item can be edited or deleted using the inline buttons.
+-->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoffeeKing – Menus</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <h1>Menus</h1>
+    <nav>
+      <a href="dashboard.html">Home</a>
+      <a href="menus.html">Menus</a>
+      <a href="tables.html">Tables</a>
+      <a href="orders.html">Orders</a>
+      <a href="matches.html">Matches</a>
+      <button id="logout">Logout</button>
+    </nav>
+    <h2>Create Menu</h2>
+    <form id="menu-form">
+      <input type="text" id="menu-name" placeholder="Name" required />
+      <input type="text" id="menu-description" placeholder="Description" />
+      <input type="number" id="menu-price" placeholder="Price" step="0.01" required />
+      <label>
+        Available
+        <input type="checkbox" id="menu-available" checked />
+      </label>
+      <button type="submit">Add Menu</button>
+    </form>
+    <h2>Menu Items</h2>
+    <ul id="menu-list"></ul>
+    <script src="dashboard.js"></script>
+    <script src="menus.js"></script>
+  </body>
+</html>

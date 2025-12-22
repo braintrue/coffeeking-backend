@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<!--
+  Page for creating orders.
+
+  This page allows an authenticated user to select a table and menu items
+  with quantities to place an order.  Once the order is placed the
+  server calculates the total amount and returns an order summary.
+-->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoffeeKing – Orders</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <h1>Create Order</h1>
+    <nav>
+      <a href="dashboard.html">Home</a>
+      <a href="menus.html">Menus</a>
+      <a href="tables.html">Tables</a>
+      <a href="orders.html">Orders</a>
+      <a href="matches.html">Matches</a>
+      <button id="logout">Logout</button>
+    </nav>
+    <form id="order-form">
+      <label for="order-table">Select Table:</label>
+      <select id="order-table"></select>
+      <h2>Select Items</h2>
+      <div id="order-items"></div>
+      <button type="submit">Place Order</button>
+    </form>
+    <script src="dashboard.js"></script>
+    <script src="orders.js"></script>
+  </body>
+</html>

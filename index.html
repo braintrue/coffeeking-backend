@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<!--
+  Entry point for the CoffeeKing frontend.
+
+  This page allows a user to register a new account and log in to obtain
+  a JWT.  Upon successful login the browser is redirected to the
+  dashboard where additional features are available.
+-->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoffeeKing – Login &amp; Registration</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <h1>CoffeeKing</h1>
+    <div id="auth">
+      <section>
+        <h2>Register</h2>
+        <form id="register-form">
+          <input type="email" id="reg-username" placeholder="Email" required />
+          <input type="password" id="reg-password" placeholder="Password" required />
+          <button type="submit">Register</button>
+        </form>
+        <div id="register-message"></div>
+      </section>
+      <section>
+        <h2>Login</h2>
+        <form id="login-form">
+          <input type="email" id="login-username" placeholder="Email" required />
+          <input type="password" id="login-password" placeholder="Password" required />
+          <button type="submit">Login</button>
+        </form>
+        <div id="login-message"></div>
+      </section>
+    </div>
+    <script src="main.js"></script>
+  </body>
+</html>

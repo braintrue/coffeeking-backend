@@ -1,0 +1,5 @@
+[
+  {"name": "Americano", "description": "Bold espresso with hot water", "price": 3.5, "is_available": true},
+  {"name": "Latte", "description": "Espresso with steamed milk", "price": 4.0, "is_available": true},
+  {"name": "Cold Brew", "description": "Slow steeped iced coffee", "price": 4.5, "is_available": true}
+]
