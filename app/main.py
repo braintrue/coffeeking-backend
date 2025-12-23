@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
-from app.database import Base, engine, SessionLocal
+from app.database import Base, engine, SessionLocal, session_scope
 from app.routers import auth, menu, table, order, match
 from app.utils.seed import seed_menus
 
@@ -52,12 +52,10 @@ def _is_testing() -> bool:
 
 @app.on_event("startup")
 def on_startup():
-    if os.getenv("TESTING") == "1":
+    if _is_testing():
         return
 
-    from app.database import session_scope
-    from app.utils.seed import seed_menus
-
+    Base.metadata.create_all(bind=engine)
     with session_scope() as session:
         seed_menus(session)
 

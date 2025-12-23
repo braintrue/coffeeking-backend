@@ -10,31 +10,21 @@
     <div class="container">
         <header>
             <h1>☕ CoffeeKing</h1>
-            <p class="subtitle">커피 한 잔으로 시작하는 네트워킹</p>
+            <p class="subtitle">location_code 기반 베타 플로우</p>
         </header>
 
         <main>
-            <!-- 로그인 폼 -->
-            <div id="login-section" class="card">
-                <h2>로그인</h2>
-                <form id="login-form">
-                    <div class="form-group">
-                        <label for="login-username">사용자명</label>
-                        <input type="text" id="login-username" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="login-password">비밀번호</label>
-                        <input type="password" id="login-password" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">로그인</button>
-                </form>
-                <p class="text-center">
-                    <a href="#" id="show-register">회원가입</a>
-                </p>
+            <div class="card">
+                <h2>체크인 (location_code)</h2>
+                <div class="form-group">
+                    <label for="location-code-input">location_code</label>
+                    <input type="text" id="location-code-input" value="company-12f">
+                </div>
+                <button class="btn btn-primary" id="save-location-btn">체크인(저장)</button>
+                <p class="text-muted small">기본값: company-12f</p>
             </div>
 
-            <!-- 회원가입 폼 -->
-            <div id="register-section" class="card" style="display: none;">
+            <div class="card">
                 <h2>회원가입</h2>
                 <form id="register-form">
                     <div class="form-group">
@@ -42,88 +32,189 @@
                         <input type="email" id="register-email" required>
                     </div>
                     <div class="form-group">
-                        <label for="register-username">사용자명</label>
-                        <input type="text" id="register-username" required>
-                    </div>
-                    <div class="form-group">
                         <label for="register-password">비밀번호</label>
                         <input type="password" id="register-password" required>
                     </div>
                     <div class="form-group">
-                        <label for="register-tagline">한 줄 소개 (선택)</label>
-                        <input type="text" id="register-tagline" placeholder="ex. 스타트업 개발자입니다">
+                        <label for="register-fullname">이름</label>
+                        <input type="text" id="register-fullname" placeholder="홍길동">
+                    </div>
+                    <button type="submit" class="btn btn-primary">회원가입</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2>로그인</h2>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="login-email">이메일</label>
+                        <input type="email" id="login-email" required>
                     </div>
                     <div class="form-group">
-                        <label for="register-tags">관심 태그 (선택)</label>
-                        <input type="text" id="register-tags" placeholder="ex. 개발, 스타트업, 커피">
-                        <small>쉼표 또는 공백으로 구분</small>
+                        <label for="login-password">비밀번호</label>
+                        <input type="password" id="login-password" required>
                     </div>
-                    <button type="submit" class="btn btn-primary">가입하기</button>
+                    <button type="submit" class="btn btn-primary">로그인</button>
+                    <button type="button" class="btn" id="logout-btn">로그아웃</button>
                 </form>
-                <p class="text-center">
-                    <a href="#" id="show-login">로그인으로 돌아가기</a>
-                </p>
+                <div class="mt-2">
+                    <button class="btn" id="me-btn">내 정보 (me)</button>
+                    <pre id="me-result" class="result"></pre>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>테이블 목록</h2>
+                <button class="btn btn-primary" id="load-tables-btn">테이블 불러오기</button>
+                <ul id="tables-list" class="table-list"></ul>
+            </div>
+
+            <div class="card">
+                <h2>테이블 생성</h2>
+                <form id="create-table-form">
+                    <div class="form-group">
+                        <label for="table-name">테이블 이름</label>
+                        <input type="text" id="table-name" placeholder="12F-테이블A" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="table-capacity">정원</label>
+                        <input type="number" id="table-capacity" value="2" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="table-tagline">한 줄 소개</label>
+                        <input type="text" id="table-tagline" placeholder="커피챗 환영합니다">
+                    </div>
+                    <button type="submit" class="btn btn-primary">테이블 생성</button>
+                </form>
             </div>
         </main>
     </div>
 
     <script src="/static/api-helper.js"></script>
     <script>
-        // 페이지 로드 시 토큰 확인
-        window.addEventListener('DOMContentLoaded', () => {
-            const token = getToken();
-            if (token) {
-                // 이미 로그인된 경우 주문 페이지로 이동
-                window.location.href = '/orders-page';
+        const locationInput = document.getElementById("location-code-input");
+        const tablesList = document.getElementById("tables-list");
+        const meResult = document.getElementById("me-result");
+
+        function setDefaultValues() {
+            locationInput.value = apiHelper.getLocationCode();
+        }
+
+        function renderTables(tables) {
+            tablesList.innerHTML = "";
+            if (!tables || tables.length === 0) {
+                tablesList.innerHTML = "<li>테이블이 없습니다.</li>";
+                return;
             }
-        });
 
-        // 로그인/회원가입 토글
-        document.getElementById('show-register').addEventListener('click', (e) => {
-            e.preventDefault();
-            document.getElementById('login-section').style.display = 'none';
-            document.getElementById('register-section').style.display = 'block';
-        });
+            tables.forEach((t) => {
+                const li = document.createElement("li");
+                li.innerHTML = `
+                    <div class="table-item">
+                        <div>
+                            <strong>${t.name}</strong> (${t.current_count}/${t.capacity}) - ${t.status}
+                            <div class="text-muted small">${t.tagline || ""}</div>
+                            <div class="text-muted small">location: ${t.location_code}</div>
+                        </div>
+                        <button class="btn btn-primary join-btn" data-id="${t.id}">참여</button>
+                    </div>
+                `;
+                tablesList.appendChild(li);
+            });
+        }
 
-        document.getElementById('show-login').addEventListener('click', (e) => {
-            e.preventDefault();
-            document.getElementById('register-section').style.display = 'none';
-            document.getElementById('login-section').style.display = 'block';
-        });
-
-        // 로그인 처리
-        document.getElementById('login-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const username = document.getElementById('login-username').value;
-            const password = document.getElementById('login-password').value;
-            
+        async function handleLoadTables() {
             try {
-                await authAPI.login(username, password);
-                alert('로그인 성공!');
-                window.location.href = '/orders-page';
-            } catch (error) {
-                alert('로그인 실패: ' + error.message);
+                const tables = await apiHelper.listTables();
+                renderTables(tables);
+            } catch (err) {
+                alert("테이블 불러오기 실패: " + err.message);
+            }
+        }
+
+        async function handleJoin(tableId) {
+            try {
+                const res = await apiHelper.joinTable(tableId);
+                const message = res.message ? res.message : "참여 완료";
+                alert(message);
+                await handleLoadTables();
+            } catch (err) {
+                alert("참여 실패: " + err.message);
+            }
+        }
+
+        document.getElementById("save-location-btn").addEventListener("click", () => {
+            const code = locationInput.value.trim() || "company-12f";
+            apiHelper.saveLocationCode(code);
+            alert(`location_code 저장: ${code}`);
+        });
+
+        document.getElementById("register-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const email = document.getElementById("register-email").value;
+            const password = document.getElementById("register-password").value;
+            const fullName = document.getElementById("register-fullname").value;
+            try {
+                await apiHelper.register(email, password, fullName);
+                alert("회원가입 완료! 로그인해주세요.");
+            } catch (err) {
+                alert("회원가입 실패: " + err.message);
             }
         });
 
-        // 회원가입 처리
-        document.getElementById('register-form').addEventListener('submit', async (e) => {
+        document.getElementById("login-form").addEventListener("submit", async (e) => {
             e.preventDefault();
-            
-            const email = document.getElementById('register-email').value;
-            const username = document.getElementById('register-username').value;
-            const password = document.getElementById('register-password').value;
-            const tagline = document.getElementById('register-tagline').value;
-            const tags = document.getElementById('register-tags').value;
-            
+            const email = document.getElementById("login-email").value;
+            const password = document.getElementById("login-password").value;
             try {
-                await authAPI.register(email, username, password, tagline, tags);
-                alert('회원가입 성공! 로그인해주세요.');
-                document.getElementById('show-login').click();
-            } catch (error) {
-                alert('회원가입 실패: ' + error.message);
+                await apiHelper.login(email, password);
+                alert("로그인 성공!");
+            } catch (err) {
+                alert("로그인 실패: " + err.message);
             }
+        });
+
+        document.getElementById("logout-btn").addEventListener("click", () => {
+            apiHelper.clearToken();
+            meResult.textContent = "";
+            alert("로그아웃 되었습니다.");
+        });
+
+        document.getElementById("me-btn").addEventListener("click", async () => {
+            try {
+                const me = await apiHelper.me();
+                meResult.textContent = JSON.stringify(me, null, 2);
+            } catch (err) {
+                meResult.textContent = "";
+                alert("내 정보 조회 실패: " + err.message);
+            }
+        });
+
+        document.getElementById("load-tables-btn").addEventListener("click", handleLoadTables);
+
+        tablesList.addEventListener("click", (e) => {
+            if (e.target.classList.contains("join-btn")) {
+                const id = e.target.dataset.id;
+                handleJoin(id);
+            }
+        });
+
+        document.getElementById("create-table-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const name = document.getElementById("table-name").value;
+            const capacity = document.getElementById("table-capacity").value;
+            const tagline = document.getElementById("table-tagline").value;
+            try {
+                await apiHelper.createTable({ name, capacity, tagline });
+                alert("테이블이 생성되었습니다.");
+                await handleLoadTables();
+            } catch (err) {
+                alert("테이블 생성 실패: " + err.message);
+            }
+        });
+
+        window.addEventListener("DOMContentLoaded", () => {
+            setDefaultValues();
         });
     </script>
 </body>

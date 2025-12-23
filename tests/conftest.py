@@ -163,6 +163,12 @@ def seed_base_data(setup_database):
                 payload["is_active"] = True
             if "is_available" in cols:
                 payload["is_available"] = True
+            if "location_code" in cols:
+                payload["location_code"] = "company-12f"
+            if "capacity" in cols and "capacity" not in payload:
+                payload["capacity"] = 2
+            if "current_count" in cols:
+                payload["current_count"] = 1
 
             table = Table(**payload)
             db.add(table)
@@ -172,5 +178,4 @@ def seed_base_data(setup_database):
         return {"menu_id": menu.id, "user_id": user.id, "table_id": table.id}
     finally:
         db.close()
-
 

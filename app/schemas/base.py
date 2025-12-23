@@ -44,11 +44,18 @@ class MenuOut(MenuBase):
 class TableCreate(BaseModel):
     name: str
     capacity: int = 2
-    status: str = "available"
+    tagline: Optional[str] = None
+    location_code: str
 
 
-class TableOut(TableCreate):
+class TableOut(BaseModel):
     id: int
+    name: str
+    capacity: int
+    tagline: Optional[str] = None
+    location_code: str
+    current_count: int
+    status: str
 
     model_config = ConfigDict(from_attributes=True)
 

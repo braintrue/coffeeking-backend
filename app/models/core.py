@@ -38,6 +38,9 @@ class Table(Base):
     name = Column(String, nullable=False)
     capacity = Column(Integer, default=2)
     status = Column(String, default="available")
+    location_code = Column(String, nullable=False, index=True)
+    tagline = Column(String, nullable=True)
+    current_count = Column(Integer, nullable=False, default=0)
 
     orders = relationship("Order", back_populates="table")
     matches = relationship("Match", back_populates="table")
