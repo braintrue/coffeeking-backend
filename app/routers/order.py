@@ -24,7 +24,7 @@ def create_order(payload: OrderCreate, db: Session = Depends(get_db)):
 
     total_amount = 0
     for item in payload.items:
-        menu = db.query(Menu).get(item.menu_id)
+        menu = db.get(Menu, item.menu_id)
         if not menu:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Menu {item.menu_id} not found")
         order_item = OrderItem(order_id=order.id, menu_id=item.menu_id, quantity=item.quantity)
