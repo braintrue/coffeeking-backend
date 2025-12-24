@@ -1,3 +1,18 @@
-from app.routers import auth, menu, table, order, match
+"""API Routers"""
+from app.routers import (
+    auth,
+    menus,
+    tables,
+    orders,
+    matches,
+    checkin,  # 🔥 추가
+)
 
-__all__ = ["auth", "menu", "table", "order", "match"]
+__all__ = [
+    "auth",
+    "menus",
+    "tables",
+    "orders",
+    "matches",
+    "checkin",  # 🔥 추가
+]
