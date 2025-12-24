@@ -1,4 +1,13 @@
-from app.models.core import Match, Menu, Order, OrderItem, Table, User
+"""Database Models"""
+from app.models.core import (
+    User,
+    Menu,
+    Table,
+    Order,
+    OrderItem,
+    Match,
+    CheckIn,  # 🔥 추가
+)
 
 __all__ = [
     "User",
@@ -7,4 +16,5 @@ __all__ = [
     "Order",
     "OrderItem",
     "Match",
+    "CheckIn",  # 🔥 추가
 ]
