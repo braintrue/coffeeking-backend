@@ -1,15 +1,29 @@
-# Dockerfile for the CoffeeKing frontend service.
+# CoffeeKing Backend Dockerfile
+# Python 3.11 slim 이미지 사용
+FROM python:3.11-slim
 
-# Use an Nginx base image to serve static files.
-FROM nginx:alpine
+# 작업 디렉토리 설정
+WORKDIR /app
 
-# Copy the compiled frontend assets into the web root.  Since our
-# frontend consists solely of static HTML, CSS and JS files there is
-# no build step required.
-COPY . /usr/share/nginx/html
+# 시스템 패키지 업데이트 및 필수 의존성 설치
+RUN apt-get update && apt-get install -y \
+    gcc \
+    postgresql-client \
+    && rm -rf /var/lib/apt/lists/*
 
-# Expose the default HTTP port.
-EXPOSE 80
+# Python 의존성 복사 및 설치
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Nginx runs by default under the default command; no CMD override
-# necessary.
+# 애플리케이션 코드 복사
+COPY . .
+
+# 포트 노출 (Render는 8080 사용)
+EXPOSE 8080
+
+# 헬스체크 (선택)
+HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
+    CMD python -c "import requests; requests.get('http://localhost:8080/health')"
+
+# Uvicorn 서버 실행
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]
