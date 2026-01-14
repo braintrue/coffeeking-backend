@@ -1,27 +1,33 @@
 import os
-
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
-from app.database import Base, engine, SessionLocal, session_scope
+from app.database import Base, engine, session_scope
 from app.routers import auth, menu, table, order, match
 from app.utils.seed import seed_menus
 
 settings = get_settings()
 
-# ✅ DB 테이블 생성 (운영/로컬 실행 시)
-# 테스트에서는 conftest에서 별도 엔진/세션을 쓰므로, 여기 create_all은 큰 문제 없지만
-# in-memory DB면 엔진이 다르면 테이블이 안 생길 수 있음.
-Base.metadata.create_all(bind=engine)
+def _is_testing() -> bool:
+    return (
+        os.getenv("PYTEST_CURRENT_TEST") is not None
+        or os.getenv("TESTING") == "1"
+        or os.getenv("ENVIRONMENT") == "test"
+    )
 
-app = FastAPI(title=settings.app_name)
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # [Startup] 서버 시작 시 실행
+    if not _is_testing():
+        Base.metadata.create_all(bind=engine)
+        with session_scope() as session:
+            seed_menus(session)
+    yield
+    # [Shutdown] 서버 종료 시 로직이 필요하면 여기에 작성
 
-
-@app.get("/health", include_in_schema=True)
-def health_check():
-    return {"status": "ok"}
-
+app = FastAPI(title=settings.app_name, lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -31,33 +37,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# 라우터 등록
 app.include_router(auth.router)
 app.include_router(menu.router)
 app.include_router(table.router)
 app.include_router(order.router)
 app.include_router(match.router)
 
-
-def _is_testing() -> bool:
-    """
-    pytest 실행 중이면 startup seed를 막아 CI에서 'no such table' 같은 오류를 피한다.
-    - tests/conftest.py에서 필요한 seed는 fixture에서 직접 넣는다.
-    """
-    return (
-        os.getenv("PYTEST_CURRENT_TEST") is not None
-        or os.getenv("TESTING") == "1"
-        or os.getenv("ENVIRONMENT") == "test"
-    )
-
-
-@app.on_event("startup")
-def on_startup():
-    if _is_testing():
-        return
-
-    Base.metadata.create_all(bind=engine)
-    with session_scope() as session:
-        seed_menus(session)
+@app.get("/health")
+def health_check():
+    return {"status": "ok"}
 
 @app.get("/")
 def read_root():
